@@ -1,3 +1,7 @@
-//
-// Created by Vladislav on 09.12.2024.
-//
+#include "tests.hpp"
+
+int main() {
+
+    start_tests();
+    return 0;
+}
