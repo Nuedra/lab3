@@ -6,4 +6,5 @@ set(CMAKE_CXX_STANDARD 14)
 add_executable(lab3
         main.cpp
         tests.cpp
-        tests.hpp)
+        tests.hpp
+        IDictionary.hpp)

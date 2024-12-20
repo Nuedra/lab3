@@ -5,8 +5,7 @@
 #include <stdexcept>
 #include "data_structures/DynamicArray.h"
 #include "data_structures/LinkedList.h"
-#include <string>
-#include <iostream>
+#include "IDictionary.hpp"
 
 template<typename TKey, typename TValue>
 struct Pair {
@@ -15,19 +14,15 @@ struct Pair {
 };
 
 template<typename TKey, typename TValue>
-class HashTable {
+class HashTable : public IDictionary<TKey,TValue> {
 public:
-    explicit HashTable(int capacity = 16)
-            : capacity_(capacity), count_(0)
-    {
+    explicit HashTable(int capacity = 16): capacity_(capacity), count_(0) {
         buckets_ = DynamicArray<LinkedList<Pair<TKey,TValue>>>(capacity_);
     }
 
-    ~HashTable() {
+    ~HashTable() override = default;
 
-    }
-
-    void Add(const TKey& key, const TValue& value) {
+    void Add(const TKey& key, const TValue& value) override {
         int idx = getIndex(key);
         LinkedList<Pair<TKey,TValue>>& bucket = buckets_[idx];
         // Проверяем, есть ли уже такой ключ
@@ -51,7 +46,7 @@ public:
         }
     }
 
-    TValue Get(const TKey& key) const {
+    TValue Get(const TKey& key) const override {
         int idx = getIndex(key);
         const LinkedList<Pair<TKey,TValue>>& bucket = buckets_[idx];
         for (int i = 0; i < bucket.GetLength(); i++) {
@@ -63,7 +58,7 @@ public:
         throw std::out_of_range("Key not found");
     }
 
-    void Remove(const TKey& key) {
+    void Remove(const TKey& key) override {
         int idx = getIndex(key);
         LinkedList<Pair<TKey,TValue>>& bucket = buckets_[idx];
         for (int i = 0; i < bucket.GetLength(); i++) {
@@ -84,7 +79,7 @@ public:
         throw std::out_of_range("Key not found to remove");
     }
 
-    bool ContainsKey(const TKey& key) const {
+    bool ContainsKey(const TKey& key) const override {
         int idx = getIndex(key);
         const LinkedList<Pair<TKey,TValue>>& bucket = buckets_[idx];
         for (int i = 0; i < bucket.GetLength(); i++) {
@@ -96,11 +91,11 @@ public:
         return false;
     }
 
-    int GetCount() const {
+    int GetCount() const override {
         return count_;
     }
 
-    int GetCapacity() const {
+    int GetCapacity() const override {
         return capacity_;
     }
 

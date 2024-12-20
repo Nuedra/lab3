@@ -1,4 +1,6 @@
 #include "HashTable.hpp"
+#include "string"
+#include "iostream"
 
 void int_tests_hash_table(){
     {
