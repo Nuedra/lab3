@@ -29,7 +29,7 @@ public:
     const T& get(int index) const override;
     T& get(int index) override;
 
-    Sequence<T>* get_subsequence(int start_index, int end_index) const override;
+    Sequence<T>* get_subSequence(int start_index, int end_index) const override;
     int get_length() const override;
     void append(const T& item) override;
     void prepend(const T& item) override;

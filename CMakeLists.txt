@@ -7,4 +7,11 @@ add_executable(lab3
         main.cpp
         tests.cpp
         tests.hpp
-        IDictionary.hpp)
+        IDictionary.hpp
+        IIterator.hpp
+        person.hpp
+        csv_actions.hpp
+        csv_actions.cpp
+        Pair.hpp
+        compare.cpp
+        histogram.cpp)

@@ -69,7 +69,7 @@ T& ArraySequence<T>::get(int index) {
 }
 
 template<typename T>
-Sequence<T>* ArraySequence<T>::get_subsequence(int start_index, int end_index) const {
+Sequence<T>* ArraySequence<T>::get_subSequence(int start_index, int end_index) const {
     if (start_index < 0 || end_index >= length || start_index > end_index) {
         throw std::out_of_range(INDEX_OUT_OF_RANGE);
     }

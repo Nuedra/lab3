@@ -17,8 +17,8 @@ public:
     virtual void set(int index, const T& item) = 0;
     virtual Sequence<T>* concat(Sequence<T>* list) const = 0;
     virtual void swap(int index1, int index2) = 0;
-    virtual void reserve(int new_capacity) = 0; // Добавлен метод reserve
-    virtual ~Sequence() {}
+    virtual void reserve(int new_capacity) = 0;
+    virtual ~Sequence() = default;
 };
 
 #endif // SEQUENCE_H
