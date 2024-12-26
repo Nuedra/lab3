@@ -134,7 +134,7 @@ public:
                     e = 0;
                 }
             }
-            return false; // Следующего элемента нет
+            return false;
         }
 
         bool next() override {
@@ -193,7 +193,6 @@ public:
         }
     };
 
-    // Метод для получения итератора
     IIterator<Pair<TKey, TValue>>* get_iterator() const {
         return new HashTableIterator(*this);
     }

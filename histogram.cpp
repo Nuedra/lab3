@@ -20,6 +20,7 @@ Pair<int, int> find_interval_for_year(int year, int start_year, int end_year, in
 
     return Pair<int, int>{interval_start, std::min(interval_end, end_year)};
 }
+
 // Плавающитй шаг для гистограмы (шаг определяется диопозоном)
 HashTable<Pair<int, int>, int> build_histogram(const ArraySequence<person>& persons, int start_year, int end_year, int step) {
     HashTable<Pair<int, int>, int> histogram(50);
