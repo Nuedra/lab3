@@ -16,6 +16,13 @@ struct Pair {
     bool operator==(const Pair& other) const {
         return value1 == other.value1 && value2 == other.value2;
     }
+
+    bool operator<(const Pair& other) const {
+        // Сортировка по value1, при равенстве — по value2
+        if(value1 < other.value1) return true;
+        if(value1 > other.value1) return false;
+        return (value2 < other.value2);
+    }
 };
 
 template<typename TKey, typename TValue>
@@ -23,15 +30,8 @@ struct KeyValuePair : public Pair<TKey, TValue> {
     TKey key;
     TValue value;
 
+    KeyValuePair() = default;
     KeyValuePair(const TKey& k, const TValue& v) : Pair<TKey, TValue>(k, v), key(this->value1), value(this->value2) {}
-};
-
-template<typename T>
-struct TimeRange : public Pair<T, T> {
-    T start_year;
-    T last_year;
-
-    TimeRange(const T& start, const T& last) : Pair<T, T>(start, last), start_year(this->value1), last_year(this->value2) {}
 };
 
 static inline void hash_combine(std::size_t& seed, std::size_t h) {
@@ -52,6 +52,21 @@ namespace std {
         return seed;
     }
 };
+
+    template<typename TKey, typename TValue>
+    struct hash<KeyValuePair<TKey, TValue>> {
+        std::size_t operator()(const Pair<TKey, TValue>& p) const {
+            std::size_t h1 = std::hash<TKey>()(p.value1);
+            std::size_t h2 = std::hash<TValue>()(p.value2);
+
+            std::size_t seed = 0;
+            hash_combine(seed, h1);
+            hash_combine(seed, h2);
+
+            return seed;
+        }
+
+    };
 }
 
 #endif //LAB3_PAIR_HPP

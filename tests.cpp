@@ -92,7 +92,7 @@ void test_hash_table_iterator() {
     {
         HashTable<int, int> table(10);
         auto it = table.get_iterator();
-        Pair<int, int> element{};
+        KeyValuePair<int, int> element{};
         assert(!it->try_get_current_item(element));
         assert(!it->has_next());
         // Нет следующего элемента, next() вернёт false, итератор выведет сообщение в cerr
@@ -104,7 +104,7 @@ void test_hash_table_iterator() {
         HashTable<int, int> table(10);
         table.add(1, 100);
         auto it = table.get_iterator();
-        Pair<int, int> element{};
+        KeyValuePair<int, int> element{};
         assert(it->try_get_current_item(element));
         assert(element.key == 1 && element.value == 100);
         assert(!it->has_next());
@@ -120,7 +120,7 @@ void test_hash_table_iterator() {
         table.add(3, 300);
 
         auto it = table.get_iterator();
-        Pair<int, int> element{};
+        KeyValuePair<int, int> element{};
         int count = 0;
         while (it->try_get_current_item(element)) {
             // Проверяем, что элемент правильный
@@ -145,7 +145,7 @@ void test_hash_table_iterator() {
         table.remove(1);
 
         auto it = table.get_iterator();
-        Pair<int, int> element{};
+        KeyValuePair<int, int> element{};
         assert(it->try_get_current_item(element));
         assert(element.key == 2 && element.value == 200);
         assert(!it->has_next());
@@ -160,7 +160,7 @@ void test_hash_table_iterator() {
         }
 
         auto it = table.get_iterator();
-        Pair<int, int> element{};
+        KeyValuePair<int, int> element{};
         int count = 0;
         while (it->try_get_current_item(element)) {
             assert(element.value == element.key * 10);
@@ -179,7 +179,7 @@ void test_hash_table_iterator() {
         table.add(1, 100);
 
         auto it = table.get_iterator();
-        Pair<int, int> element{};
+        KeyValuePair<int, int> element{};
         assert(it->try_get_current_item(element));
         assert(element.key == 1 && element.value == 100);
         // Переходим дальше, нет следующего элемента
@@ -193,11 +193,12 @@ void test_hash_table_iterator() {
 
 void pair_tests_hash_table() {
     {
+        // Ключи – именно Pair<int,int>
         HashTable<Pair<int,int>, int> table(10);
 
         Pair<int,int> p1{42, 10};
         Pair<int,int> p2{10, 20};
-        Pair<int,int> p3{42, 10}; // тот же ключ, что и p1
+        Pair<int,int> p3{42, 10};
         Pair<int,int> p4{15, 15};
 
         table.add(p1, 100);
@@ -210,7 +211,7 @@ void pair_tests_hash_table() {
         assert(table.contains_key(p2));
         assert(table.get(p2) == 200);
 
-        // Добавляем p3, который эквивалентен p1
+        // Добавляем p3 (эквивалентен p1 по ==), значение должно обновиться
         table.add(p3, 300);
         assert(table.get_count() == 2);
         assert(table.get(p1) == 300);
@@ -233,7 +234,6 @@ void pair_tests_hash_table() {
         }
         assert(exception_thrown);
     }
-
 }
 
 void start_tests(){

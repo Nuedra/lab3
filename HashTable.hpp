@@ -3,8 +3,10 @@
 
 #include <functional> // Для std::hash
 #include <stdexcept>
+#include <vector>
 #include "data_structures/DynamicArray.h"
 #include "data_structures/LinkedList.h"
+#include "data_structures/ArraySequence.h"
 #include "IDictionary.hpp"
 #include "IIterator.hpp"
 #include "Pair.hpp"
@@ -13,14 +15,14 @@ template<typename TKey, typename TValue>
 class HashTable : public IDictionary<TKey, TValue> {
 public:
     explicit HashTable(int capacity = 16) : capacity_(capacity), count_(0) {
-        buckets_ = DynamicArray<LinkedList<Pair<TKey, TValue>>>(capacity_);
+        buckets_ = DynamicArray<LinkedList<KeyValuePair<TKey, TValue>>>(capacity_);
     }
 
     ~HashTable() override = default;
 
     void add(const TKey& key, const TValue& value) override {
         int idx = get_index(key);
-        LinkedList<Pair<TKey, TValue>>& bucket = buckets_[idx];
+        LinkedList<KeyValuePair<TKey, TValue>>& bucket = buckets_[idx];
         // Проверяем, есть ли уже такой ключ
         for (int i = 0; i < bucket.GetLength(); i++) {
             auto pair = bucket.Get(i); // Квадратичная сложность от длины цепочки переполнения
@@ -31,9 +33,14 @@ public:
             }
         }
 
-        Pair<TKey, TValue> new_pair{key, value};
+        KeyValuePair<TKey, TValue> new_pair{key, value};
         bucket.Append(new_pair);
         count_++;
+
+        if (std::find(ordered_keys_.begin(), ordered_keys_.end(), key) == ordered_keys_.end()) {
+            ordered_keys_.push_back(key);
+            std::sort(ordered_keys_.begin(), ordered_keys_.end());
+        }
 
         if (count_ == capacity_) {
             int new_cap = capacity_ * q_;
@@ -44,7 +51,7 @@ public:
 
     TValue get(const TKey& key) const override {
         int idx = get_index(key);
-        const LinkedList<Pair<TKey, TValue>>& bucket = buckets_[idx];
+        const LinkedList<KeyValuePair<TKey, TValue>>& bucket = buckets_[idx];
         for (int i = 0; i < bucket.GetLength(); i++) {
             auto pair = bucket.Get(i);
             if (pair.key == key) {
@@ -56,12 +63,17 @@ public:
 
     void remove(const TKey& key) override {
         int idx = get_index(key);
-        LinkedList<Pair<TKey, TValue>>& bucket = buckets_[idx];
+        LinkedList<KeyValuePair<TKey, TValue>>& bucket = buckets_[idx];
         for (int i = 0; i < bucket.GetLength(); i++) {
             auto pair = bucket.Get(i); // Квадратичная сложность от длинны цепочки переполнения
             if (pair.key == key) {
                 bucket.RemoveAt(i);
                 count_--;
+
+                auto it = std::remove(ordered_keys_.begin(), ordered_keys_.end(), key);
+                if (it != ordered_keys_.end()) {
+                    ordered_keys_.erase(it, ordered_keys_.end());
+                }
 
                 // Проверяем условие сжатия: n ≤ c/p
                 if (count_ <= (capacity_ / p_) && capacity_ > 1) {
@@ -77,7 +89,7 @@ public:
 
     bool contains_key(const TKey& key) const override {
         int idx = get_index(key);
-        const LinkedList<Pair<TKey, TValue>>& bucket = buckets_[idx];
+        const LinkedList<KeyValuePair<TKey, TValue>>& bucket = buckets_[idx];
         for (int i = 0; i < bucket.GetLength(); i++) {
             auto pair = bucket.Get(i);
             if (pair.key == key) {
@@ -96,109 +108,54 @@ public:
     }
 
     // Реализация итератора
-    class HashTableIterator : public IIterator<Pair<TKey, TValue>> {
+    class HashTableIterator : public IIterator<KeyValuePair<TKey, TValue>> {
     public:
-        explicit HashTableIterator(const HashTable& table) : table_(table), bucket_index_(0), element_index_(0)
-        {
-            if (!move_to_first_element()) {
-                // Если элементов нет, помечаем итератор как "за концом"
-                bucket_index_ = table_.capacity_;
-                element_index_ = 0;
-            }
-        }
+        explicit HashTableIterator(const std::vector<TKey>& keys, const HashTable& table): keys_(keys), table_(table), index_(0) {}
 
-        Pair<TKey, TValue> get_current_item() const override {
-            if (!is_valid_position()) {
+        KeyValuePair<TKey, TValue> get_current_item() const override {
+            if (index_ >= keys_.size()) {
                 throw std::out_of_range("Iterator out of range");
             }
-            const auto& bucket = table_.buckets_[bucket_index_];
-            return bucket.Get(element_index_);
+            TKey key = keys_[index_];
+            TValue value = table_.get(key);
+            return KeyValuePair<TKey, TValue>{key, value};
         }
 
         bool has_next() const override {
-            // Проверяем, можно ли сдвинуться на следующий элемент без изменения состояния итератора
-            if (!is_valid_position()) return false;
-
-            int b = bucket_index_;
-            int e = element_index_;
-            e++; // пробуем сдвинуться вперёд
-            while (b < table_.capacity_) {
-                const auto& bucket = table_.buckets_[b];
-                if (e < bucket.GetLength()) {
-                    // Следующий элемент существует
-                    return true;
-                }
-                else{
-                    // Переходим к следующему бакету
-                    b++;
-                    e = 0;
-                }
-            }
-            return false;
+            return (index_ + 1) < keys_.size();
         }
 
         bool next() override {
-            // Пытаемся перейти к следующему элементу
-            int b = bucket_index_;
-            int e = element_index_;
-            e++;
-            while (b < table_.capacity_) {
-                const auto& bucket = table_.buckets_[b];
-                if (e < bucket.GetLength()) {
-                    // Нашли следующий элемент
-                    bucket_index_ = b;
-                    element_index_ = e;
-                    return true;
-                }
-                else{
-                    b++;
-                    e = 0;
-                }
+            if(index_ >= keys_.size()) {
+                return false;
             }
 
-            return false;
+            index_++;
+            return (index_ < keys_.size());
         }
 
-        bool try_get_current_item(Pair<TKey, TValue>& element) const override {
-            if (!is_valid_position()) return false;
-            const auto& bucket = table_.buckets_[bucket_index_];
-            element = bucket.Get(element_index_);
+        bool try_get_current_item(KeyValuePair<TKey, TValue>& element) const override {
+            if(index_ >= keys_.size()) {
+                return false;
+            }
+            TKey key = keys_[index_];
+            element = KeyValuePair<TKey, TValue>{key, table_.get(key)};
             return true;
         }
 
     private:
+        const std::vector<TKey>& keys_;
         const HashTable& table_;
-        int bucket_index_;
-        int element_index_;
-
-        bool move_to_first_element() {
-            // Ищем первый непустой бакет и первый элемент в нём
-            while (bucket_index_ < table_.capacity_) {
-                const auto& bucket = table_.buckets_[bucket_index_];
-                if (bucket.GetLength() > 0) {
-                    element_index_ = 0;
-                    return true;
-                }
-                else{
-                    bucket_index_++;
-                }
-            }
-            return false;
-        }
-
-        bool is_valid_position() const {
-            if (bucket_index_ < 0 || bucket_index_ >= table_.capacity_) return false;
-            const auto& bucket = table_.buckets_[bucket_index_];
-            return (element_index_ >= 0 && element_index_ < bucket.GetLength());
-        }
+        size_t index_;
     };
 
-    IIterator<Pair<TKey, TValue>>* get_iterator() const {
-        return new HashTableIterator(*this);
+    IIterator<KeyValuePair<TKey, TValue>>* get_iterator() const {
+        return new HashTableIterator(ordered_keys_, *this);
     }
 
 private:
-    DynamicArray<LinkedList<Pair<TKey, TValue>>> buckets_;
+    DynamicArray<LinkedList<KeyValuePair<TKey, TValue>>> buckets_;
+    std::vector<TKey> ordered_keys_;
     int capacity_;
     int count_;
     std::hash<TKey> hasher_;
@@ -212,10 +169,10 @@ private:
     }
 
     void resize(int new_capacity) {
-        DynamicArray<LinkedList<Pair<TKey, TValue>>> new_buckets(new_capacity);
+        DynamicArray<LinkedList<KeyValuePair<TKey, TValue>>> new_buckets(new_capacity);
         // Переносим элементы
         for (int i = 0; i < capacity_; i++) {
-            LinkedList<Pair<TKey, TValue>>& old_bucket = buckets_[i];
+            LinkedList<KeyValuePair<TKey, TValue>>& old_bucket = buckets_[i];
             for (int j = 0; j < old_bucket.GetLength(); j++) {
                 auto pair = old_bucket.Get(j);
                 size_t h = hasher_(pair.key);

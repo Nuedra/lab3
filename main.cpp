@@ -16,12 +16,11 @@ void histogram_person_tests() {
     auto histogram = build_histogram(persons, start_year, end_year, step);
 
     auto it = histogram.get_iterator();
-    Pair<Pair<int, int>, int> current{};
+    KeyValuePair<Pair<int, int>, int> current{};
 
     do {
         current = it->get_current_item();
-        // current.key - это Pair<int,int>, current.value - int
-        std::cout << "Count in [" << current.key.key << ", " << current.key.value << "): "
+        std::cout << "Count in [" << current.key.value1 << ", " << current.key.value2 << "): "
                   << current.value << "\n";
     } while (it->next());
 
