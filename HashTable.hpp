@@ -177,8 +177,8 @@ public:
         size_t index_;
     };
 
-    IIterator<KeyValuePair<TKey, TValue>>* get_iterator() const {
-        return new HashTableIterator(ordered_keys_, *this);
+    HashTableIterator get_iterator() const {
+        return HashTableIterator(ordered_keys_, *this);
     }
 
 private:

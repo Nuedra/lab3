@@ -32,7 +32,7 @@ HashTable<Pair<int, int>, int> build_histogram(const ArraySequence<person>& pers
     int dynamic_step = (range + intervals_count - 1) / intervals_count;
 
     for(int y = start_year; y < end_year; y += dynamic_step) {
-        int interval_end = std::min(y + dynamic_step, end_year);
+        int interval_end = std::min(y + dynamic_step, end_year); // у
         Pair<int, int> interval{y, interval_end};
         histogram.add(interval, 0);
     }

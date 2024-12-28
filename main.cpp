@@ -78,15 +78,14 @@ int main() {
 
     HashTable<Pair<int,int>, int> histogram = build_histogram(persons, start_year, end_year, intervals_count);
 
-    IIterator<KeyValuePair<Pair<int,int>, int>>* it = histogram.get_iterator();
+    HashTable<Pair<int,int>, int>::HashTableIterator it = histogram.get_iterator();
     KeyValuePair<Pair<int,int>, int> current{};
 
     std::cout << "\nПостроенная гистограмма:\n";
-    while (it->try_get_current_item(current)) {
+    while (it.try_get_current_item(current)) {
         std::cout << "Count in [" << current.key.value1 << ", " << current.key.value2 << "): " << current.value << "\n";
-        it->next();
+        it.next();
     }
-    delete it;
 
     save_histogram_text(histogram, "../histogram_data.txt");
     save_histogram_binary(histogram, "../histogram_data.bin");

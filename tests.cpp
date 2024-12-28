@@ -82,11 +82,10 @@ void test_hash_table_iterator() {
         HashTable<int, int> table(10);
         auto it = table.get_iterator();
         KeyValuePair<int, int> element{};
-        assert(!it->try_get_current_item(element));
-        assert(!it->has_next());
+        assert(!it.try_get_current_item(element));
+        assert(!it.has_next());
         // нет следующего элемента, next() вернёт false
-        assert(!it->next());
-        delete it;
+        assert(!it.next());
     }
 
     {
@@ -94,12 +93,11 @@ void test_hash_table_iterator() {
         table.add(1, 100);
         auto it = table.get_iterator();
         KeyValuePair<int, int> element{};
-        assert(it->try_get_current_item(element));
+        assert(it.try_get_current_item(element));
         assert(element.key == 1 && element.value == 100);
-        assert(!it->has_next());
+        assert(!it.has_next());
         //нет следующего элемента, next() вернёт false
-        assert(!it->next());
-        delete it;
+        assert(!it.next());
     }
 
     {
@@ -111,19 +109,18 @@ void test_hash_table_iterator() {
         auto it = table.get_iterator();
         KeyValuePair<int, int> element{};
         int count = 0;
-        while (it->try_get_current_item(element)) {
+        while (it.try_get_current_item(element)) {
             assert((element.key == 1 && element.value == 100) ||
                    (element.key == 2 && element.value == 200) ||
                    (element.key == 3 && element.value == 300));
             count++;
             // переходим к следующему, если его нет, next() вернёт false
-            if (!it->next()) {
+            if (!it.next()) {
                 //  достигнут конец
                 break;
             }
         }
         assert(count == 3);
-        delete it;
     }
 
     {
@@ -134,11 +131,10 @@ void test_hash_table_iterator() {
 
         auto it = table.get_iterator();
         KeyValuePair<int, int> element{};
-        assert(it->try_get_current_item(element));
+        assert(it.try_get_current_item(element));
         assert(element.key == 2 && element.value == 200);
-        assert(!it->has_next());
-        assert(!it->next());
-        delete it;
+        assert(!it.has_next());
+        assert(!it.next());
     }
 
     {
@@ -150,15 +146,14 @@ void test_hash_table_iterator() {
         auto it = table.get_iterator();
         KeyValuePair<int, int> element{};
         int count = 0;
-        while (it->try_get_current_item(element)) {
+        while (it.try_get_current_item(element)) {
             assert(element.value == element.key * 10);
             count++;
-            if (!it->next()) {
+            if (!it.next()) {
                 break;
             }
         }
         assert(count == 100);
-        delete it;
     }
 
     {
@@ -167,11 +162,10 @@ void test_hash_table_iterator() {
 
         auto it = table.get_iterator();
         KeyValuePair<int, int> element{};
-        assert(it->try_get_current_item(element));
+        assert(it.try_get_current_item(element));
         assert(element.key == 1 && element.value == 100);
-        assert(!it->next());
+        assert(!it.next());
         assert(element.key == 1 && element.value == 100);
-        delete it;
     }
 
 }

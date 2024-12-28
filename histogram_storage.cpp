@@ -14,10 +14,10 @@ static void save_histogram_generic(const HashTable<Pair<int,int>, int>& histogra
         out << item_count << "\n";
     }
 
-    IIterator<KeyValuePair<Pair<int,int>, int>>* it = histogram.get_iterator();
+    HashTable<Pair<int,int>, int>::HashTableIterator it = histogram.get_iterator();
     KeyValuePair<Pair<int,int>, int> kvp;
 
-    while (it->try_get_current_item(kvp)) {
+    while (it.try_get_current_item(kvp)) {
         int start = kvp.key.value1;
         int end   = kvp.key.value2;
         int count = kvp.value;
@@ -33,9 +33,8 @@ static void save_histogram_generic(const HashTable<Pair<int,int>, int>& histogra
             out << start << " " << end << " " << count << "\n";
         }
 
-        it->next();
+        it.next();
     }
-    delete it;
 }
 
 //  функция загрузки из потока (text/binary).
