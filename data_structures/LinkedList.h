@@ -34,11 +34,13 @@ public:
     void Prepend(T item);
     void InsertAt(T item, int index);
     void RemoveAt(int index);
+    void RemoveNode(LinkedListNode<T>* prev, LinkedListNode<T>* node);
 
     size_t GetLength() const;
     T GetFirst() const;
     T GetLast() const;
     T Get(int index) const;
+    LinkedListNode<T>* GetNode(int index) const;
     void Set(int index, const T& value);
 };
 

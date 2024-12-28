@@ -144,6 +144,32 @@ void LinkedList<T>::RemoveAt(int index) {
 }
 
 template<class T>
+void LinkedList<T>::RemoveNode(LinkedListNode<T>* prev, LinkedListNode<T>* node) {
+    if (!node) {
+        throw std::invalid_argument("Node is null");
+    }
+
+    if (node == head) {
+        head = head->next;
+        if (node == tail) {
+            tail = nullptr;
+        }
+    }
+    else if (prev) {
+        prev->next = node->next;
+        if (node == tail) {
+            tail = prev;
+        }
+    }
+    else {
+        throw std::invalid_argument("Invalid previous node");
+    }
+
+    delete node;
+    length--;
+}
+
+template<class T>
 size_t LinkedList<T>::GetLength() const {
     return length;
 }
@@ -170,6 +196,18 @@ T LinkedList<T>::Get(int index) const {
         current = current->next;
     }
     return current->value;
+}
+
+template<class T>
+LinkedListNode<T>* LinkedList<T>::GetNode(int index) const {
+    if (index < 0 || index >= (int)length) {
+        throw std::out_of_range("Index out of range");
+    }
+    LinkedListNode<T>* current = head;
+    for (int i = 0; i < index; i++) {
+        current = current->next;
+    }
+    return current;
 }
 
 template<class T>

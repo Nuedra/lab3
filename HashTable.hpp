@@ -23,14 +23,19 @@ public:
     void add(const TKey& key, const TValue& value) override {
         int idx = get_index(key);
         LinkedList<KeyValuePair<TKey, TValue>>& bucket = buckets_[idx];
-        // Проверяем, есть ли уже такой ключ
+
+        LinkedListNode<KeyValuePair<TKey, TValue>>* current = nullptr;
+        // указатель на первый узел
+        if (bucket.GetLength() > 0) {
+            current = bucket.GetNode(0);
+        }
+
         for (int i = 0; i < bucket.GetLength(); i++) {
-            auto pair = bucket.Get(i); // Квадратичная сложность от длины цепочки переполнения
-            if (pair.key == key) {
-                pair.value = value;
-                bucket.Set(i, pair);
+            if (current->value.key == key) {
+                current->value.value = value;
                 return;
             }
+            current = current->next;
         }
 
         KeyValuePair<TKey, TValue> new_pair{key, value};
@@ -64,10 +69,13 @@ public:
     void remove(const TKey& key) override {
         int idx = get_index(key);
         LinkedList<KeyValuePair<TKey, TValue>>& bucket = buckets_[idx];
-        for (int i = 0; i < bucket.GetLength(); i++) {
-            auto pair = bucket.Get(i); // Квадратичная сложность от длинны цепочки переполнения
-            if (pair.key == key) {
-                bucket.RemoveAt(i);
+
+        LinkedListNode<KeyValuePair<TKey, TValue>>* current = bucket.GetNode(0);
+        LinkedListNode<KeyValuePair<TKey, TValue>>* prev = nullptr;
+
+        while (current) {
+            if (current->value.key == key) {
+                bucket.RemoveNode(prev, current);
                 count_--;
 
                 auto it = std::remove(ordered_keys_.begin(), ordered_keys_.end(), key);
@@ -75,14 +83,16 @@ public:
                     ordered_keys_.erase(it, ordered_keys_.end());
                 }
 
-                // Проверяем условие сжатия: n ≤ c/p
                 if (count_ <= (capacity_ / p_) && capacity_ > 1) {
                     int new_cap = capacity_ / q_;
-                    if (new_cap < 1) new_cap = 1; //  Разобраться и поменять 1
+                    if (new_cap < 1) new_cap = 1;
                     resize(new_cap);
                 }
                 return;
             }
+
+            prev = current;
+            current = current->next;
         }
         throw std::out_of_range("Key not found to remove");
     }
