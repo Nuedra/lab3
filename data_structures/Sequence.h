@@ -13,7 +13,11 @@ public:
     virtual int get_length() const = 0;
     virtual void append(const T& item) = 0;
     virtual void prepend(const T& item) = 0;
+    virtual int index_of(const T& item) const = 0;
     virtual void insert_at(const T& item, int index) = 0;
+    virtual void remove_at(int index) = 0;
+    virtual bool remove_item(const T& item) = 0;
+    virtual bool contains(const T& item) const = 0;
     virtual void set(int index, const T& item) = 0;
     virtual Sequence<T>* concat(Sequence<T>* list) const = 0;
     virtual void swap(int index1, int index2) = 0;

@@ -107,6 +107,8 @@ void ArraySequence<T>::append(const T& item) {
     length++;
 }
 
+
+
 template<typename T>
 void ArraySequence<T>::prepend(const T& item) {
     ensure_capacity(length + 1);
@@ -115,6 +117,22 @@ void ArraySequence<T>::prepend(const T& item) {
     }
     data->set(0, item);
     length++;
+}
+
+template<typename T>
+int ArraySequence<T>::index_of(const T& item) const {
+    for (int i = 0; i < length; i++) {
+        if (data->get(i) == item) {
+            return i;
+        }
+    }
+    return -1; // не нашли
+}
+
+// есть ли item в последовательности
+template<typename T>
+bool ArraySequence<T>::contains(const T& item) const {
+    return (index_of(item) != -1);
 }
 
 template<typename T>
@@ -128,6 +146,27 @@ void ArraySequence<T>::insert_at(const T& item, int index) {
     }
     data->set(index, item);
     length++;
+}
+
+template<typename T>
+void ArraySequence<T>::remove_at(int index) {
+    if (index < 0 || index >= length) {
+        throw std::out_of_range("Index out of range");
+    }
+    for (int i = index; i < length - 1; i++) {
+        data->set(i, data->get(i + 1));
+    }
+    length--;
+}
+
+template<typename T>
+bool ArraySequence<T>::remove_item(const T& item) {
+    int idx = index_of(item);
+    if (idx == -1) {
+        return false; // нет такого элемента
+    }
+    remove_at(idx);
+    return true;
 }
 
 template<typename T>

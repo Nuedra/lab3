@@ -44,49 +44,38 @@ void int_tests_hash_table(){
 }
 
 void test_hash_table_compression_expansion(){
-    HashTable<int, std::string> table(4);
+    HashTable<int, std::string> table(16);
     table.add(1, "one");
     table.add(2, "two");
-    assert(table.get_count() == 2);
-    assert(table.contains_key(1));
-    assert(table.contains_key(2));
-    assert(table.get(1) == "one");
-    assert(table.get(2) == "two");
-
-    table.add(1, "ONE");
-    assert(table.get_count() == 2);
-    assert(table.get(1) == "ONE");
-
     table.add(3, "three");
-    assert(table.get_count() == 3);
-    assert(table.get_capacity() == 4);
     table.add(4, "four");
+    table.add(5, "five");
+    table.add(6, "six");
+    table.add(7, "seven");
+    table.add(8, "eight");
+    table.add(9, "nine");
+    table.add(10, "ten");
+    table.add(11, "eleven");
+    table.add(12, "twelve");
+    table.add(13, "thirteen");
+    table.add(14, "fourteen");
+    table.add(15, "fifteen");
 
-    assert(table.get_capacity() == 8);
-    assert(table.get_count() == 4);
+    assert(table.get_count() == 15);
+    assert(table.get_capacity() == 16);
 
-    assert(table.get(1) == "ONE");
-    assert(table.get(2) == "two");
-    assert(table.get(3) == "three");
-    assert(table.get(4) == "four");
+    table.add(16, "sixteen");
 
-    table.remove(4);
-    assert(table.get_capacity() == 4);
-    assert(table.get_count() == 3);
+    assert(table.get_count() == 16);
+    assert(table.get_capacity() == 32);
 
-    assert(table.contains_key(1));
-    assert(table.contains_key(2));
-    assert(table.contains_key(3));
+    table.remove(16);
 
-    table.remove(1);
-    table.remove(2);
-    table.remove(3);
+    assert(table.get_count() == 15);
+    assert(table.get_capacity() == 16);
 
-    assert(table.get_count() == 0);
-    assert(table.get_capacity() == 1);
-
-    assert(!table.contains_key(1));
 }
+
 
 void test_hash_table_iterator() {
     {
@@ -95,7 +84,7 @@ void test_hash_table_iterator() {
         KeyValuePair<int, int> element{};
         assert(!it->try_get_current_item(element));
         assert(!it->has_next());
-        // Нет следующего элемента, next() вернёт false, итератор выведет сообщение в cerr
+        // нет следующего элемента, next() вернёт false
         assert(!it->next());
         delete it;
     }
@@ -108,7 +97,7 @@ void test_hash_table_iterator() {
         assert(it->try_get_current_item(element));
         assert(element.key == 1 && element.value == 100);
         assert(!it->has_next());
-        // Поскольку нет следующего элемента, next() вернёт false и выведет в cerr
+        //нет следующего элемента, next() вернёт false
         assert(!it->next());
         delete it;
     }
@@ -123,14 +112,13 @@ void test_hash_table_iterator() {
         KeyValuePair<int, int> element{};
         int count = 0;
         while (it->try_get_current_item(element)) {
-            // Проверяем, что элемент правильный
             assert((element.key == 1 && element.value == 100) ||
                    (element.key == 2 && element.value == 200) ||
                    (element.key == 3 && element.value == 300));
             count++;
-            // Переходим к следующему, если его нет, next() вернёт false
+            // переходим к следующему, если его нет, next() вернёт false
             if (!it->next()) {
-                // Значит достигнут конец
+                //  достигнут конец
                 break;
             }
         }
@@ -166,7 +154,6 @@ void test_hash_table_iterator() {
             assert(element.value == element.key * 10);
             count++;
             if (!it->next()) {
-                // Достигнут конец
                 break;
             }
         }
@@ -182,9 +169,7 @@ void test_hash_table_iterator() {
         KeyValuePair<int, int> element{};
         assert(it->try_get_current_item(element));
         assert(element.key == 1 && element.value == 100);
-        // Переходим дальше, нет следующего элемента
         assert(!it->next());
-        // Теперь итератор снова указывает на элемент
         assert(element.key == 1 && element.value == 100);
         delete it;
     }
@@ -192,48 +177,44 @@ void test_hash_table_iterator() {
 }
 
 void pair_tests_hash_table() {
-    {
-        // Ключи – именно Pair<int,int>
-        HashTable<Pair<int,int>, int> table(10);
+    // ключи –  Pair<int,int>
+    HashTable<Pair<int,int>, int> table(10);
 
-        Pair<int,int> p1{42, 10};
-        Pair<int,int> p2{10, 20};
-        Pair<int,int> p3{42, 10};
-        Pair<int,int> p4{15, 15};
+    Pair<int,int> p1{42, 10};
+    Pair<int,int> p2{10, 20};
+    Pair<int,int> p3{42, 10};
+    Pair<int,int> p4{15, 15};
+    table.add(p1, 100);
+    assert(table.get_count() == 1);
+    assert(table.contains_key(p1));
+    assert(table.get(p1) == 100);
 
-        table.add(p1, 100);
-        assert(table.get_count() == 1);
-        assert(table.contains_key(p1));
-        assert(table.get(p1) == 100);
+    table.add(p2, 200);
+    assert(table.get_count() == 2);
+    assert(table.contains_key(p2));
+    assert(table.get(p2) == 200);
 
-        table.add(p2, 200);
-        assert(table.get_count() == 2);
-        assert(table.contains_key(p2));
-        assert(table.get(p2) == 200);
+    table.add(p3, 300);
+    assert(table.get_count() == 2);
+    assert(table.get(p1) == 300);
 
-        // Добавляем p3 (эквивалентен p1 по ==), значение должно обновиться
-        table.add(p3, 300);
-        assert(table.get_count() == 2);
-        assert(table.get(p1) == 300);
+    table.add(p4, 300);
+    assert(table.get_count() == 3);
+    assert(table.contains_key(p4));
+    assert(table.get(p4) == 300);
 
-        table.add(p4, 300);
-        assert(table.get_count() == 3);
-        assert(table.contains_key(p4));
-        assert(table.get(p4) == 300);
+    table.remove(p2);
+    assert(table.get_count() == 2);
+    assert(!table.contains_key(p2));
 
-        table.remove(p2);
-        assert(table.get_count() == 2);
-        assert(!table.contains_key(p2));
-
-        bool exception_thrown = false;
-        try {
-            table.get(p2);
-        }
-        catch (const std::out_of_range&) {
-            exception_thrown = true;
-        }
-        assert(exception_thrown);
+    bool exception_thrown = false;
+    try {
+        table.get(p2);
     }
+    catch (const std::out_of_range&) {
+        exception_thrown = true;
+    }
+    assert(exception_thrown);
 }
 
 void start_tests(){

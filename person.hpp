@@ -10,6 +10,15 @@ struct person {
     float height{};
     float weight{};
     int salary{};
+
+    bool operator==(const person& other) const {
+        return first_name == other.first_name &&
+               last_name == other.last_name &&
+               birth_year == other.birth_year &&
+               height == other.height &&
+               weight == other.weight &&
+               salary == other.salary;
+    }
 };
 
 #endif // PERSON_HPP

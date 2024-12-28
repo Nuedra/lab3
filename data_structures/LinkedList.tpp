@@ -10,7 +10,7 @@ LinkedList<T>::LinkedList() : head(nullptr), tail(nullptr), length(0) {}
 template<class T>
 LinkedList<T>::LinkedList(const T* items, int count) : head(nullptr), tail(nullptr), length(0) {
     for (int i = 0; i < count; ++i) {
-        Append(items[i]);
+        append(items[i]);
     }
 }
 
@@ -20,34 +20,33 @@ LinkedList<T>& LinkedList<T>::operator=(const LinkedList<T>& other) {
         return *this;
     }
 
-    Clear();
+    clear();
 
     LinkedListNode<T>* current = other.head;
     while (current != nullptr) {
-        Append(current->value);
+        append(current->value);
         current = current->next;
     }
 
     return *this;
 }
 
-
 template<class T>
 LinkedList<T>::LinkedList(const LinkedList<T>& list) : head(nullptr), tail(nullptr), length(0) {
     LinkedListNode<T>* current = list.head;
     while (current != nullptr) {
-        Append(current->value);
+        append(current->value);
         current = current->next;
     }
 }
 
 template<class T>
 LinkedList<T>::~LinkedList() {
-    Clear();
+    clear();
 }
 
 template<class T>
-void LinkedList<T>::Clear() {
+void LinkedList<T>::clear() {
     while (head != nullptr) {
         LinkedListNode<T>* current = head;
         head = head->next;
@@ -58,25 +57,25 @@ void LinkedList<T>::Clear() {
 }
 
 template<class T>
-LinkedList<T>* LinkedList<T>::GetSubList(int startIndex, int endIndex) {
-    if (startIndex < 0 || endIndex < 0 || startIndex > endIndex || endIndex >= (int)length) {
+LinkedList<T>* LinkedList<T>::get_sub_list(int start_index, int end_index) {
+    if (start_index < 0 || end_index < 0 || start_index > end_index || end_index >= (int)length) {
         throw std::out_of_range("Index out of range");
     }
 
-    auto* subList = new LinkedList<T>();
+    auto* sub_list = new LinkedList<T>();
     LinkedListNode<T>* current = this->head;
-    for (int i = 0; i < startIndex; ++i) {
+    for (int i = 0; i < start_index; ++i) {
         current = current->next;
     }
-    for (int i = startIndex; i <= endIndex; ++i) {
-        subList->Append(current->value);
+    for (int i = start_index; i <= end_index; ++i) {
+        sub_list->append(current->value);
         current = current->next;
     }
-    return subList;
+    return sub_list;
 }
 
 template<class T>
-void LinkedList<T>::Append(T item) {
+void LinkedList<T>::append(T item) {
     LinkedListNode<T>* node = new LinkedListNode<T>(item, nullptr);
     if (tail == nullptr) {
         head = tail = node;
@@ -88,39 +87,39 @@ void LinkedList<T>::Append(T item) {
 }
 
 template<class T>
-void LinkedList<T>::Prepend(T item) {
-    LinkedListNode<T>* newNode = new LinkedListNode<T>(item, head);
-    head = newNode;
+void LinkedList<T>::prepend(T item) {
+    LinkedListNode<T>* new_node = new LinkedListNode<T>(item, head);
+    head = new_node;
     if (length == 0) {
-        tail = newNode;
+        tail = new_node;
     }
     length++;
 }
 
 template<class T>
-void LinkedList<T>::InsertAt(T item, int index) {
+void LinkedList<T>::insert_at(T item, int index) {
     if (index < 0 || index > (int)length) {
         throw std::out_of_range("Index out of range");
     }
     if (index == 0) {
-        Prepend(item);
+        prepend(item);
         return;
     }
     if (index == (int)length) {
-        Append(item);
+        append(item);
         return;
     }
     LinkedListNode<T>* current = head;
     for (int i = 0; i < index - 1; i++) {
         current = current->next;
     }
-    LinkedListNode<T>* newNode = new LinkedListNode<T>(item, current->next);
-    current->next = newNode;
+    LinkedListNode<T>* new_node = new LinkedListNode<T>(item, current->next);
+    current->next = new_node;
     length++;
 }
 
 template<class T>
-void LinkedList<T>::RemoveAt(int index) {
+void LinkedList<T>::remove_at(int index) {
     if (index < 0 || index >= (int)length) {
         throw std::out_of_range("Index out of range");
     }
@@ -136,15 +135,15 @@ void LinkedList<T>::RemoveAt(int index) {
     for (int i = 0; i < index - 1; i++) {
         current = current->next;
     }
-    LinkedListNode<T>* toRemove = current->next;
-    current->next = toRemove->next;
-    if (toRemove == tail) tail = current;
-    delete toRemove;
+    LinkedListNode<T>* to_remove = current->next;
+    current->next = to_remove->next;
+    if (to_remove == tail) tail = current;
+    delete to_remove;
     length--;
 }
 
 template<class T>
-void LinkedList<T>::RemoveNode(LinkedListNode<T>* prev, LinkedListNode<T>* node) {
+void LinkedList<T>::remove_node(LinkedListNode<T>* prev, LinkedListNode<T>* node) {
     if (!node) {
         throw std::invalid_argument("Node is null");
     }
@@ -170,24 +169,24 @@ void LinkedList<T>::RemoveNode(LinkedListNode<T>* prev, LinkedListNode<T>* node)
 }
 
 template<class T>
-size_t LinkedList<T>::GetLength() const {
+size_t LinkedList<T>::get_length() const {
     return length;
 }
 
 template<class T>
-T LinkedList<T>::GetFirst() const {
+T LinkedList<T>::get_first() const {
     if (head == nullptr) throw std::out_of_range("LinkedList is empty");
     return head->value;
 }
 
 template<class T>
-T LinkedList<T>::GetLast() const {
+T LinkedList<T>::get_last() const {
     if (tail == nullptr) throw std::out_of_range("LinkedList is empty");
     return tail->value;
 }
 
 template<class T>
-T LinkedList<T>::Get(int index) const {
+T LinkedList<T>::get(int index) const {
     if (index < 0 || index >= (int)length) {
         throw std::out_of_range("Index out of range");
     }
@@ -199,7 +198,7 @@ T LinkedList<T>::Get(int index) const {
 }
 
 template<class T>
-LinkedListNode<T>* LinkedList<T>::GetNode(int index) const {
+LinkedListNode<T>* LinkedList<T>::get_node(int index) const {
     if (index < 0 || index >= (int)length) {
         throw std::out_of_range("Index out of range");
     }
@@ -211,7 +210,7 @@ LinkedListNode<T>* LinkedList<T>::GetNode(int index) const {
 }
 
 template<class T>
-void LinkedList<T>::Set(int index, const T& value) {
+void LinkedList<T>::set(int index, const T& value) {
     if (index < 0 || index >= (int)length) {
         throw std::out_of_range("Index out of range");
     }

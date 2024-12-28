@@ -33,7 +33,11 @@ public:
     int get_length() const override;
     void append(const T& item) override;
     void prepend(const T& item) override;
+    int index_of(const T& item) const override;
+    bool contains(const T& item) const override;
     void insert_at(const T& item, int index) override;
+    void remove_at(int index) override;
+    bool remove_item(const T& item) override;
     void set(int index, const T& item) override;
     Sequence<T>* concat(Sequence<T>* list) const override;
     void swap(int index1, int index2) override;

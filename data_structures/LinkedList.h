@@ -20,7 +20,7 @@ private:
     LinkedListNode<T>* tail;
     size_t length;
 
-    void Clear();
+    void clear();
 
 public:
     LinkedList();
@@ -29,22 +29,21 @@ public:
     ~LinkedList();
     LinkedList<T>& operator=(const LinkedList<T>& other);
 
-    LinkedList<T>* GetSubList(int startIndex, int endIndex);
-    void Append(T item);
-    void Prepend(T item);
-    void InsertAt(T item, int index);
-    void RemoveAt(int index);
-    void RemoveNode(LinkedListNode<T>* prev, LinkedListNode<T>* node);
+    LinkedList<T>* get_sub_list(int start_index, int end_index);
+    void append(T item);
+    void prepend(T item);
+    void insert_at(T item, int index);
+    void remove_at(int index);
+    void remove_node(LinkedListNode<T>* prev, LinkedListNode<T>* node);
 
-    size_t GetLength() const;
-    T GetFirst() const;
-    T GetLast() const;
-    T Get(int index) const;
-    LinkedListNode<T>* GetNode(int index) const;
-    void Set(int index, const T& value);
+    size_t get_length() const;
+    T get_first() const;
+    T get_last() const;
+    T get(int index) const;
+    LinkedListNode<T>* get_node(int index) const;
+    void set(int index, const T& value);
 };
 
 #include "LinkedList.tpp"
-
 
 #endif //LAB3_LINKEDIN_H

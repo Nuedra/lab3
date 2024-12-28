@@ -18,10 +18,13 @@ struct Pair {
     }
 
     bool operator<(const Pair& other) const {
-        // Сортировка по value1, при равенстве — по value2
         if(value1 < other.value1) return true;
         if(value1 > other.value1) return false;
-        return (value2 < other.value2);
+        return value2 < other.value2;
+    }
+
+    bool operator>(const Pair& other) const {
+        return (other < *this);
     }
 };
 

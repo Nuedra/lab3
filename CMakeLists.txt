@@ -14,4 +14,7 @@ add_executable(lab3
         csv_actions.cpp
         Pair.hpp
         compare.cpp
-        histogram.cpp)
+        histogram.cpp
+        HeapSorter.hpp
+        histogram_storage.cpp
+        histogram_storage.hpp)

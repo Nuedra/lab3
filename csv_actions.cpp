@@ -2,7 +2,7 @@
 #include "data_structures/ArraySequence.h"
 #include "person.hpp"
 #include <string>
-#include "QuickSorter.hpp"
+#include "HeapSorter.hpp"
 #include "compare.hpp"
 #include <fstream>
 #include <sstream>
@@ -129,7 +129,7 @@ ArraySequence<person> read_csv(const std::string& filename) {
 void generate_and_write_sorted_persons_to_file(int number_of_persons) {
     generate_and_write_persons_to_file(number_of_persons);
     ArraySequence<person> sequence = read_csv("../csv/data.csv");
-    QuickSorter<person> sorter;
+    HeapSorter<person> sorter;
     sorter.Sort(sequence, compare_person_salary);
     write_csv("../csv/sorted.csv", sequence);
 }
@@ -137,7 +137,7 @@ void generate_and_write_sorted_persons_to_file(int number_of_persons) {
 void generate_and_write_reverse_sorted_persons_to_file(int number_of_persons) {
     generate_and_write_persons_to_file(number_of_persons);
     ArraySequence<person> sequence = read_csv("../csv/data.csv");
-    QuickSorter<person> sorter;
+    HeapSorter<person> sorter;
     sorter.Sort(sequence, compare_person_salary);
 
     // Обратный порядок
