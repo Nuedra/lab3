@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.29)
+cmake_minimum_required(VERSION 3.27)
 project(lab3)
 
 set(CMAKE_CXX_STANDARD 20)
@@ -33,7 +33,6 @@ add_executable(lab3
         histogram_storage.cpp
         histogram_storage.hpp
         graphics.cpp
-        LinkedListIterator.hpp
 )
 
 target_link_libraries(lab3 ${Boost_LIBRARIES})
