@@ -1,7 +1,6 @@
 #include "histogram_storage.hpp"
 #include <fstream>
 #include <stdexcept>
-#include "IIterator.hpp"
 
 // функция сохранения в поток (text/binary).
 static void save_histogram_generic(const HashTable<Pair<int,int>, int>& histogram, std::ostream& out, bool is_binary) {
@@ -23,13 +22,13 @@ static void save_histogram_generic(const HashTable<Pair<int,int>, int>& histogra
         int count = kvp.value;
 
         if (is_binary) {
-            // Пишем три int
+            //  три int
             out.write(reinterpret_cast<const char*>(&start), sizeof(start));
             out.write(reinterpret_cast<const char*>(&end),   sizeof(end));
             out.write(reinterpret_cast<const char*>(&count), sizeof(count));
         }
         else {
-            // Пишем в текстовом формате
+            //  в текстовом формате
             out << start << " " << end << " " << count << "\n";
         }
 

@@ -6,8 +6,6 @@ void test_hash_table_compression_expansion();
 void test_hash_table_iterator();
 void start_tests();
 void pair_tests_hash_table();
+void test_linked_list_iterator();
 
 #endif //LAB3_TESTS_HPP
-
-
-

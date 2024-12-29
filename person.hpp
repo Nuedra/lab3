@@ -22,4 +22,3 @@ struct person {
 };
 
 #endif // PERSON_HPP
-

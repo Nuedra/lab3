@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.29)
 project(lab3)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 20)
 
 # Поиск Boost с необходимыми компонентами
 find_package(Boost REQUIRED COMPONENTS iostreams)
@@ -32,6 +32,8 @@ add_executable(lab3
         HeapSorter.hpp
         histogram_storage.cpp
         histogram_storage.hpp
+        graphics.cpp
+        LinkedListIterator.hpp
 )
 
 target_link_libraries(lab3 ${Boost_LIBRARIES})

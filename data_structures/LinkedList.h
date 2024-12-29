@@ -1,8 +1,7 @@
 #ifndef LAB3_LINKEDIN_H
 #define LAB3_LINKEDIN_H
 
-#include <stdexcept>
-#include <cstddef>
+#include "../IIterator.hpp"
 
 template<class T>
 class LinkedListNode {
@@ -11,6 +10,7 @@ public:
     LinkedListNode<T>* next;
 
     LinkedListNode(const T& value, LinkedListNode<T>* next = nullptr);
+
 };
 
 template<class T>
@@ -33,15 +33,57 @@ public:
     void append(T item);
     void prepend(T item);
     void insert_at(T item, int index);
-    void remove_at(int index);
-    void remove_node(LinkedListNode<T>* prev, LinkedListNode<T>* node);
 
     size_t get_length() const;
     T get_first() const;
     T get_last() const;
     T get(int index) const;
-    LinkedListNode<T>* get_node(int index) const;
     void set(int index, const T& value);
+    bool remove_value(const T& value);
+
+    void remove_at(int index);
+
+    template<typename T_I>
+    class LinkedListIterator : public IIterator<T_I> {
+    public:
+        explicit LinkedListIterator(LinkedListNode<T_I>* start_node): current_(start_node) {}
+
+        T get_current_item() const override {
+            if (!current_) {
+                throw std::out_of_range("LinkedListIterator: out of range");
+            }
+            return current_->value;
+        }
+
+        bool has_next() const override {
+            if (!current_) return false;
+            return (current_->next != nullptr);
+        }
+
+        bool next() override {
+            if (!current_) {
+                return false;
+            }
+            current_ = current_->next;
+            return (current_ != nullptr);
+        }
+
+        bool try_get_current_item(T& element) const override {
+            if (!current_) {
+                return false;
+            }
+            element = current_->value;
+            return true;
+        }
+
+    private:
+        LinkedListNode<T>* current_;
+    };
+
+    LinkedListIterator<T> get_iterator() const {
+        return LinkedListIterator<T>(this->head);
+    }
+
 };
 
 #include "LinkedList.tpp"

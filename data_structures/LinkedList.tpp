@@ -1,4 +1,6 @@
 #include "LinkedList.h"
+#include <stdexcept>
+#include <cstddef>
 
 template<class T>
 LinkedListNode<T>::LinkedListNode(const T& value, LinkedListNode<T>* next)
@@ -119,53 +121,38 @@ void LinkedList<T>::insert_at(T item, int index) {
 }
 
 template<class T>
-void LinkedList<T>::remove_at(int index) {
-    if (index < 0 || index >= (int)length) {
-        throw std::out_of_range("Index out of range");
+bool LinkedList<T>::remove_value(const T& value) {
+    if (!head) {
+        return false;
     }
-    if (index == 0) {
-        LinkedListNode<T>* temp = head;
+
+    if (head->value == value) {
+        LinkedListNode<T>* tmp = head;
         head = head->next;
-        delete temp;
+        if (!head) {
+            tail = nullptr; // если список стал пуст
+        }
+        delete tmp;
         length--;
-        if (length == 0) tail = nullptr;
-        return;
+        return true;
     }
-    LinkedListNode<T>* current = head;
-    for (int i = 0; i < index - 1; i++) {
+
+    LinkedListNode<T>* prev = head;
+    LinkedListNode<T>* current = head->next;
+    while (current) {
+        if (current->value == value) {
+            prev->next = current->next;
+            if (current == tail) {
+                tail = prev;
+            }
+            delete current;
+            length--;
+            return true;
+        }
+        prev = current;
         current = current->next;
     }
-    LinkedListNode<T>* to_remove = current->next;
-    current->next = to_remove->next;
-    if (to_remove == tail) tail = current;
-    delete to_remove;
-    length--;
-}
-
-template<class T>
-void LinkedList<T>::remove_node(LinkedListNode<T>* prev, LinkedListNode<T>* node) {
-    if (!node) {
-        throw std::invalid_argument("Node is null");
-    }
-
-    if (node == head) {
-        head = head->next;
-        if (node == tail) {
-            tail = nullptr;
-        }
-    }
-    else if (prev) {
-        prev->next = node->next;
-        if (node == tail) {
-            tail = prev;
-        }
-    }
-    else {
-        throw std::invalid_argument("Invalid previous node");
-    }
-
-    delete node;
-    length--;
+    return false;
 }
 
 template<class T>
@@ -198,18 +185,6 @@ T LinkedList<T>::get(int index) const {
 }
 
 template<class T>
-LinkedListNode<T>* LinkedList<T>::get_node(int index) const {
-    if (index < 0 || index >= (int)length) {
-        throw std::out_of_range("Index out of range");
-    }
-    LinkedListNode<T>* current = head;
-    for (int i = 0; i < index; i++) {
-        current = current->next;
-    }
-    return current;
-}
-
-template<class T>
 void LinkedList<T>::set(int index, const T& value) {
     if (index < 0 || index >= (int)length) {
         throw std::out_of_range("Index out of range");
@@ -219,4 +194,28 @@ void LinkedList<T>::set(int index, const T& value) {
         current = current->next;
     }
     current->value = value;
+}
+
+template<class T>
+void LinkedList<T>::remove_at(int index) {
+    if (index < 0 || index >= (int)length) {
+        throw std::out_of_range("Index out of range");
+    }
+    if (index == 0) {
+        LinkedListNode<T>* temp = head;
+        head = head->next;
+        delete temp;
+        length--;
+        if (length == 0) tail = nullptr;
+        return;
+    }
+    LinkedListNode<T>* current = head;
+    for (int i = 0; i < index - 1; i++) {
+        current = current->next;
+    }
+    LinkedListNode<T>* to_remove = current->next;
+    current->next = to_remove->next;
+    if (to_remove == tail) tail = current;
+    delete to_remove;
+    length--;
 }

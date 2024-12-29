@@ -1,10 +1,8 @@
 #ifndef LAB3_PAIR_HPP
 #define LAB3_PAIR_HPP
 
-#include <iostream>
 #include <functional>
 
-// Базовая структура Pair
 template<typename T1, typename T2>
 struct Pair {
     T1 value1;

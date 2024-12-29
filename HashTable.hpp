@@ -24,19 +24,20 @@ public:
         int idx = get_index(key);
         LinkedList<KeyValuePair<TKey, TValue>>& bucket = buckets_[idx];
 
-        LinkedListNode<KeyValuePair<TKey, TValue>>* current = nullptr;
-        // указатель на первый узел
-        if (bucket.get_length() > 0) {
-            current = bucket.get_node(0);
-        }
-
-        for (int i = 0; i < bucket.get_length(); i++) {
-            if (current->value.key == key) {
-                current->value.value = value;
+        auto it = bucket.get_iterator();
+        KeyValuePair<TKey, TValue> kvp;
+        while (it.try_get_current_item(kvp)) {
+            if (kvp.key == key) {
+                // Ключ уже есть — обновим значение
+                // Но для обновления нам нужно знать индекс или уметь set_current_item
+                // (чтобы не искать заново).
+                // Для упрощения здесь сделаем removeAt + append или через find_index_in_bucket
+                update_value_in_bucket(bucket, key, value);
                 return;
             }
-            current = current->next;
+            it.next();
         }
+
 
         KeyValuePair<TKey, TValue> new_pair{key, value};
         bucket.append(new_pair);
@@ -44,7 +45,6 @@ public:
 
         if (!ordered_keys_.contains(key)) {
             ordered_keys_.append(key);
-
             HeapSorter<TKey> sorter;
             sorter.Sort(ordered_keys_);
         }
@@ -60,17 +60,13 @@ public:
         int idx = get_index(key);
         const LinkedList<KeyValuePair<TKey, TValue>>& bucket = buckets_[idx];
 
-        if (bucket.get_length() == 0) {
-            throw std::out_of_range("Key not found");
-        }
-
-        LinkedListNode<KeyValuePair<TKey, TValue>>* current = bucket.get_node(0);
-
-        for (int i = 0; i < (int)bucket.get_length(); i++) {
-            if (current->value.key == key) {
-                return current->value.value;
+        auto it = bucket.get_iterator();
+        KeyValuePair<TKey, TValue> kvp;
+        while (it.try_get_current_item(kvp)) {
+            if (kvp.key == key) {
+                return kvp.value;
             }
-            current = current->next;
+            it.next();
         }
         throw std::out_of_range("Key not found");
     }
@@ -79,51 +75,35 @@ public:
         int idx = get_index(key);
         LinkedList<KeyValuePair<TKey, TValue>>& bucket = buckets_[idx];
 
-        if (bucket.get_length() == 0) {
+        int index = find_index_in_bucket(bucket, key);
+        if (index == -1) {
             throw std::out_of_range("Key not found to remove");
         }
+        bucket.remove_at(index);
+        count_--;
 
-        LinkedListNode<KeyValuePair<TKey, TValue>>* current = bucket.get_node(0);
-        LinkedListNode<KeyValuePair<TKey, TValue>>* prev = nullptr;
+        ordered_keys_.remove_item(key);
 
-        while (current) {
-            if (current->value.key == key) {
-                bucket.remove_node(prev, current);
-                count_--;
-
-                ordered_keys_.remove_item(key);
-
-                if (count_ <= (capacity_ / resize_threshold_factor) && capacity_ > 1) {
-                    int new_cap = capacity_ / resize_factor;
-                    if (new_cap < 16) new_cap = 16;
-                    resize(new_cap);
-                }
-                return;
-            }
-
-            prev = current;
-            current = current->next;
+        // Проверяем уменьшение
+        if (count_ <= (capacity_ / resize_threshold_factor) && capacity_ > 1) {
+            int new_cap = capacity_ / resize_factor;
+            if (new_cap < 16) new_cap = 16;
+            resize(new_cap);
         }
-        throw std::out_of_range("Key not found to remove");
     }
 
     bool contains_key(const TKey& key) const override {
         int idx = get_index(key);
         const LinkedList<KeyValuePair<TKey, TValue>>& bucket = buckets_[idx];
 
-        if (bucket.get_length() == 0) {
-            return false;
-        }
-
-        LinkedListNode<KeyValuePair<TKey, TValue>>* current = bucket.get_node(0);
-
-        for (int i = 0; i < (int)bucket.get_length(); i++) {
-            if (current->value.key == key) {
+        auto it = bucket.get_iterator();
+        KeyValuePair<TKey, TValue> kvp;
+        while (it.try_get_current_item(kvp)) {
+            if (kvp.key == key) {
                 return true;
             }
-            current = current->next;
+            it.next();
         }
-
         return false;
     }
 
@@ -135,7 +115,7 @@ public:
         return capacity_;
     }
 
-    // Реализация итератора
+    //  итератор
     class HashTableIterator : public IIterator<KeyValuePair<TKey, TValue>> {
     public:
         explicit HashTableIterator(const ArraySequence<TKey>& keys, const HashTable& table): keys_(keys), table_(table), index_(0) {}
@@ -188,38 +168,59 @@ private:
     int count_;
     std::hash<TKey> hasher_;
 
-    const double resize_threshold_factor = 2.0; // Сделать понятнее
+    const double resize_threshold_factor = 2.0;
     const double resize_factor = 2.0;
 
     int get_index(const TKey& key) const {
         size_t h = hasher_(key);
-        return h % static_cast<size_t>(capacity_);
+        return static_cast<int>(h % capacity_);
+    }
+
+    // поиск индекса элемента в bucket
+    int find_index_in_bucket(LinkedList<KeyValuePair<TKey, TValue>>& bucket, const TKey& key) const {
+        auto it = bucket.get_iterator();
+        KeyValuePair<TKey,TValue> kvp;
+        int idx = 0;
+        while (it.try_get_current_item(kvp)) {
+            if (kvp.key == key) {
+                return idx;
+            }
+            it.next();
+            idx++;
+        }
+        return -1;
+    }
+
+    // если есть ключ, обновляем значение, иначе добавляем
+    void update_value_in_bucket(LinkedList<KeyValuePair<TKey, TValue>>& bucket, const TKey& key, const TValue& new_val) {
+        int idx = find_index_in_bucket(bucket, key);
+        if (idx == -1) {
+            bucket.append(KeyValuePair<TKey,TValue>{key, new_val});
+            count_++;
+        }
+        else {
+            KeyValuePair<TKey,TValue> old_kvp = bucket.get(idx);
+            old_kvp.value = new_val;
+            bucket.set(idx, old_kvp);
+        }
     }
 
     void resize(int new_capacity) {
         DynamicArray<LinkedList<KeyValuePair<TKey, TValue>>> new_buckets(new_capacity);
 
-        // Переносим элементы из старых бакетов в новые
         for (int i = 0; i < capacity_; i++) {
             LinkedList<KeyValuePair<TKey, TValue>>& old_bucket = buckets_[i];
-            if (old_bucket.get_length() == 0) {
-                continue;
-            }
+            if (old_bucket.get_length() == 0) continue;
 
-            LinkedListNode<KeyValuePair<TKey, TValue>>* current = old_bucket.get_node(0);
-
-            for (int j = 0; j < (int)old_bucket.get_length(); j++) {
-                // Текущий pair
-                auto& kvp = current->value;
+            auto it = old_bucket.get_iterator();
+            KeyValuePair<TKey,TValue> kvp;
+            while (it.try_get_current_item(kvp)) {
                 size_t h = hasher_(kvp.key);
-                int new_idx = h % static_cast<size_t>(new_capacity);
-
+                int new_idx = static_cast<int>(h % new_capacity);
                 new_buckets[new_idx].append(kvp);
-
-                current = current->next;
+                it.next();
             }
         }
-
         buckets_ = new_buckets;
         capacity_ = new_capacity;
     }

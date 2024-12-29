@@ -3,7 +3,7 @@
 #include "iostream"
 #include "Pair.hpp"
 #include "histogram.hpp"
-#include "data_structures/ArraySequence.h"
+#include "data_structures/LinkedList.h"
 
 void int_tests_hash_table(){
     {
@@ -211,10 +211,101 @@ void pair_tests_hash_table() {
     assert(exception_thrown);
 }
 
+void test_linked_list_iterator() {
+    {
+        LinkedList<int> list;
+        auto it = list.get_iterator();
+        int element;
+        assert(!it.try_get_current_item(element));
+        assert(!it.has_next());
+        // Нет следующего элемента, next() вернёт false
+        assert(!it.next());
+    }
+
+    {
+        LinkedList<int> list;
+        list.append(100);
+        auto it = list.get_iterator();
+        int element;
+        assert(it.try_get_current_item(element));
+        assert(element == 100);
+        assert(!it.has_next());
+        // Нет следующего элемента, next() вернёт false
+        assert(!it.next());
+    }
+
+    {
+        LinkedList<int> list;
+        list.append(100);
+        list.append(200);
+        list.append(300);
+
+        auto it = list.get_iterator();
+        int element;
+        int count = 0;
+        while (it.try_get_current_item(element)) {
+            assert(element == 100 || element == 200 || element == 300);
+            count++;
+            // Переходим к следующему, если его нет, next() вернёт false
+            if (!it.next()) {
+                // Достигнут конец
+                break;
+            }
+        }
+        assert(count == 3);
+    }
+
+    {
+        LinkedList<int> list;
+        list.append(100);
+        list.append(200);
+        list.remove_value(100);
+
+        auto it = list.get_iterator();
+        int element;
+        assert(it.try_get_current_item(element));
+        assert(element == 200);
+        assert(!it.has_next());
+        assert(!it.next());
+    }
+
+    {
+        LinkedList<int> list;
+        for (int i = 0; i < 100; ++i) {
+            list.append(i * 10);
+        }
+
+        auto it = list.get_iterator();
+        int element;
+        int count = 0;
+        while (it.try_get_current_item(element)) {
+            assert(element == count * 10);
+            count++;
+            if (!it.next()) {
+                break;
+            }
+        }
+        assert(count == 100);
+    }
+
+    {
+        LinkedList<int> list;
+        list.append(100);
+
+        auto it = list.get_iterator();
+        int element;
+        assert(it.try_get_current_item(element));
+        assert(element == 100);
+        assert(!it.next());
+        assert(element == 100);
+    }
+}
+
 void start_tests(){
     test_hash_table_compression_expansion();
     int_tests_hash_table();
     test_hash_table_iterator();
     pair_tests_hash_table();
+    test_linked_list_iterator();
     std::cout << "All tests passed successfully!" << std::endl;
 }
