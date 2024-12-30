@@ -63,6 +63,7 @@ void plot_histogram_txt(const std::string& txt_filename, const std::string& png_
 
     gp.send1d(plot_data);
 
-    std::string command = "open " + png_filename;
+    std::string command = "open " + png_filename; // для mac os
+    // для Linux std::string command = "xdg-open " + png_filename;
     system(command.c_str());
 }

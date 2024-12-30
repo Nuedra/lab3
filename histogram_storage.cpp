@@ -37,7 +37,7 @@ static void save_histogram_generic(const HashTable<Pair<int,int>, int>& histogra
 }
 
 //  функция загрузки из потока (text/binary).
-static HashTable<Pair<int,int>, int> load_histogram_generic(std::istream& in, bool is_binary){
+static HashTable<Pair<int,int>, int> load_histogram_generic(std::istream& in, bool is_binary) {
 
     int item_count = 0;
     if (is_binary) {

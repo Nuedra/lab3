@@ -26,7 +26,6 @@ private:
         }
     }
 
-
     void Heapify(ArraySequence<T>& seq, int n, int i, int (*cmp)(const T&, const T&)) {
         int largest = i;
         int left = 2 * i + 1;

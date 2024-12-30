@@ -98,8 +98,8 @@ int main() {
 
     save_histogram_text(histogram, "../histogram_data.txt");
     save_histogram_binary(histogram, "../histogram_data.bin");
-    std::cout << "\nГистограмма сохранена в:\n" << "  ../histogram_data.txt (текстовый формат)\n"
-              << "  ../histogram_data.bin (бинарный формат)\n";
+    std::cout << "\nГистограмма сохранена в:\n" << "/histogram_data.txt (текстовый формат)\n"
+              << "/histogram_data.bin (бинарный формат)\n" << "graphic.png (графический формат)\n";
 
     plot_histogram_txt("../histogram_data.txt", "../graphic.png");
 

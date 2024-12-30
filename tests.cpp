@@ -307,5 +307,5 @@ void start_tests(){
     test_hash_table_iterator();
     pair_tests_hash_table();
     test_linked_list_iterator();
-    std::cout << "All tests passed successfully!" << std::endl;
+    std::cout << "Все тесты прошли!" << std::endl;
 }

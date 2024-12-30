@@ -28,16 +28,11 @@ public:
         KeyValuePair<TKey, TValue> kvp;
         while (it.try_get_current_item(kvp)) {
             if (kvp.key == key) {
-                // Ключ уже есть — обновим значение
-                // Но для обновления нам нужно знать индекс или уметь set_current_item
-                // (чтобы не искать заново).
-                // Для упрощения здесь сделаем removeAt + append или через find_index_in_bucket
                 update_value_in_bucket(bucket, key, value);
                 return;
             }
             it.next();
         }
-
 
         KeyValuePair<TKey, TValue> new_pair{key, value};
         bucket.append(new_pair);
@@ -84,7 +79,6 @@ public:
 
         ordered_keys_.remove_item(key);
 
-        // Проверяем уменьшение
         if (count_ <= (capacity_ / resize_threshold_factor) && capacity_ > 1) {
             int new_cap = capacity_ / resize_factor;
             if (new_cap < 16) new_cap = 16;
