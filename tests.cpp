@@ -5,7 +5,7 @@
 #include "histogram.hpp"
 #include "data_structures/LinkedList.h"
 
-void int_tests_hash_table(){
+void int_tests_hash_table() {
     {
         HashTable<int, int> table(10);
 
@@ -43,7 +43,7 @@ void int_tests_hash_table(){
     }
 }
 
-void test_hash_table_compression_expansion(){
+void test_hash_table_compression_expansion() {
     HashTable<int, std::string> table(16);
     table.add(1, "one");
     table.add(2, "two");
@@ -301,7 +301,7 @@ void test_linked_list_iterator() {
     }
 }
 
-void start_tests(){
+void start_tests() {
     test_hash_table_compression_expansion();
     int_tests_hash_table();
     test_hash_table_iterator();
