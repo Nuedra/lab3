@@ -1,7 +1,7 @@
 #ifndef ISORTER_H
 #define ISORTER_H
 
-#include "data_structures/ArraySequence.h"
+#include "../data_structures/ArraySequence.h"
 #include "compare.hpp"
 
 template<typename T>

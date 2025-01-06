@@ -9,7 +9,7 @@
 #include "IDictionary.hpp"
 #include "IIterator.hpp"
 #include "Pair.hpp"
-#include "HeapSorter.hpp"
+#include "sorter/HeapSorter.hpp"
 
 template<typename TKey, typename TValue>
 class HashTable : public IDictionary<TKey, TValue> {

@@ -2,7 +2,7 @@
 #define HEAPSORTER_HPP
 
 #include "Isorter.hpp"
-#include "data_structures/ArraySequence.h"
+#include "../data_structures/ArraySequence.h"
 #include "compare.hpp"
 
 template<typename T>

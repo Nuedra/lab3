@@ -1,9 +1,9 @@
 #include "csv_actions.hpp"
-#include "data_structures/ArraySequence.h"
+#include "../data_structures/ArraySequence.h"
 #include "person.hpp"
 #include <string>
-#include "HeapSorter.hpp"
-#include "compare.hpp"
+#include "../sorter/HeapSorter.hpp"
+#include "../sorter/compare.hpp"
 #include <fstream>
 #include <sstream>
 #include <random>

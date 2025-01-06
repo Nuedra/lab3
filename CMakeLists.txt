@@ -13,13 +13,13 @@ add_executable(lab3
         tests.hpp
         IDictionary.hpp
         IIterator.hpp
-        person.hpp
-        csv_actions.hpp
-        csv_actions.cpp
+        csv/person.hpp
+        csv/csv_actions.hpp
+        csv/csv_actions.cpp
         Pair.hpp
-        compare.cpp
+        sorter/compare.cpp
         histogram.cpp
-        HeapSorter.hpp
+        sorter/HeapSorter.hpp
         histogram_storage.cpp
         histogram_storage.hpp
         graphics.cpp

@@ -1,5 +1,5 @@
 #include "tests.hpp"
-#include "person.hpp"
+#include "csv/person.hpp"
 #include "iostream"
 #include "Pair.hpp"
 #include "histogram.hpp"

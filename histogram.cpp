@@ -1,7 +1,7 @@
 #include "histogram.hpp"
 #include "Pair.hpp"
 #include "HashTable.hpp"
-#include "person.hpp"
+#include "csv/person.hpp"
 #include "data_structures/ArraySequence.h"
 
 int custom_int_min(int a, int b) {

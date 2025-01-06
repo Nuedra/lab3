@@ -2,7 +2,7 @@
 #define CSV_ACTIONS_HPP
 
 #include "person.hpp"
-#include "data_structures/ArraySequence.h"
+#include "../data_structures/ArraySequence.h"
 #include <string>
 
 ArraySequence<std::string> load_names_from_file(const std::string& filename);

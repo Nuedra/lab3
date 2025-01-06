@@ -2,7 +2,7 @@
 #define LAB3_HISTOGRAM_HPP
 
 #include "Pair.hpp"
-#include "person.hpp"
+#include "csv/person.hpp"
 #include "data_structures/ArraySequence.h"
 #include "HashTable.hpp"
 

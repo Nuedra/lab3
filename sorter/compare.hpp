@@ -2,7 +2,7 @@
 #define COMPARE_HPP
 
 #include <string>
-#include "person.hpp"
+#include "../csv/person.hpp"
 
 template<typename T>
 int compare_default(const T& a, const T& b) {
