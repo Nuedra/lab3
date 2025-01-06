@@ -22,7 +22,7 @@ add_executable(lab3
         sorter/HeapSorter.hpp
         histogram_storage.cpp
         histogram_storage.hpp
-        graphics.cpp
+        graphics/graphics.cpp
 )
 
 target_link_libraries(lab3 ${Boost_LIBRARIES})

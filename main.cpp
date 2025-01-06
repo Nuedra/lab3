@@ -6,7 +6,7 @@
 #include "histogram.hpp"
 #include "data_structures/ArraySequence.h"
 #include "histogram_storage.hpp"
-#include "graphics.hpp"
+#include "graphics/graphics.hpp"
 
 int read_int_in_range(const char* prompt, int min_val, int max_val) {
     while (true) {
@@ -101,7 +101,7 @@ int main() {
     std::cout << "\nГистограмма сохранена в:\n" << "/histogram_data.txt (текстовый формат)\n"
               << "/histogram_data.bin (бинарный формат)\n" << "graphic.png (графический формат)\n";
 
-    plot_histogram_txt("../histogram_data.txt", "../graphic.png");
+    plot_histogram_txt("../histogram_data.txt", "../graphics/graphic.png");
 
     return 0;
 }
